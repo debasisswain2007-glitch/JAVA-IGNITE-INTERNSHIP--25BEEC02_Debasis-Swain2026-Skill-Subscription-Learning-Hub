@@ -10,7 +10,10 @@ public interface SkillPackService {
 
     List<SkillPack> getAllPacks();
 
+    List<SkillPack> searchPacks(String keyword);
+    
     SkillPack updateSkillPack(SkillPack pack);
 
     void deleteSkillPack(Long id);
+}
 }
