@@ -30,7 +30,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    
     private String name;
+    @Column(unique = true)
     private String email;
     private String password;
 
@@ -73,4 +75,5 @@ public class User {
         // TASK: store password
         this.password = password;
     }
+}
 }
