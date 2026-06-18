@@ -3,6 +3,7 @@ package com.skills.hub.repository;
 import com.skills.hub.model.SkillPack;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 /*
 =========================================================
 WHAT IS THIS FILE?
@@ -22,4 +23,6 @@ for SkillPack (courses).
 
 public interface SkillPackRepository extends JpaRepository<SkillPack, Long> {
     // No custom methods needed initially
+}
+	List<SkillPack> findByTitleContainingIgnoreCase(String keyword);
 }
