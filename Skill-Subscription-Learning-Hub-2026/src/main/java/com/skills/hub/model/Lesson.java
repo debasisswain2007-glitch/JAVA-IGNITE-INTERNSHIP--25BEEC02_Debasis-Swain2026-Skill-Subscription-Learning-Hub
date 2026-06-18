@@ -1,25 +1,30 @@
 package com.skills.hub.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /*
 =========================================================
-WHAT IS THIS CLASS?
+LESSON ENTITY
 =========================================================
 
-Lesson represents individual topics inside a SkillPack.
+Represents a lesson inside a SkillPack.
 
- Example:
-SkillPack = Java Basics
+Example:
+
+SkillPack: Java Basics
+
 Lessons:
-- Variables
-- Loops
-- OOP Concepts
+1. Variables
+2. Loops
+3. OOP Concepts
 
-=========================================================
-
-RELATIONSHIP:
-SkillPack -> has many Lessons
+Relationship:
+Many Lessons -> One SkillPack
 =========================================================
 */
 
@@ -32,11 +37,25 @@ public class Lesson {
     private Long id;
 
     private String title;
+
+    @Column(length = 5000)
     private String content;
 
-    // Many lessons belong to one skill pack
     @ManyToOne
     private SkillPack skillPack;
+
+    // =========================
+    // CONSTRUCTORS
+    // =========================
+
+    public Lesson() {
+    }
+
+    public Lesson(String title, String content, SkillPack skillPack) {
+        this.title = title;
+        this.content = content;
+        this.skillPack = skillPack;
+    }
 
     // =========================
     // GETTERS & SETTERS
@@ -55,7 +74,6 @@ public class Lesson {
     }
 
     public void setTitle(String title) {
-        // store lesson title
         this.title = title;
     }
 
@@ -64,7 +82,6 @@ public class Lesson {
     }
 
     public void setContent(String content) {
-        //  store lesson content
         this.content = content;
     }
 
@@ -73,7 +90,19 @@ public class Lesson {
     }
 
     public void setSkillPack(SkillPack skillPack) {
-        // link lesson to skill pack
         this.skillPack = skillPack;
+    }
+
+    // =========================
+    // TO STRING
+    // =========================
+
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 }
