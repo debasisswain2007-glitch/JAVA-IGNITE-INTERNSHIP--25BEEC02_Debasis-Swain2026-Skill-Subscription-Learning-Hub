@@ -2,17 +2,18 @@ package com.skills.hub.controller;
 
 import com.skills.hub.model.User;
 import com.skills.hub.service.UserService;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-/*
-=========================================================
-WHAT IS THIS FILE?
-Handles user actions like register and login
-=========================================================
-*/
+
 
 @Controller
+@RequestMapping("")
 public class UserController {
 
     private final UserService userService;
@@ -21,53 +22,72 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @GetMapping("/register")
     public String showRegisterPage() {
 
-        // =========================
-        // TASK
-        // =========================
-        // STEP 1: Return register page
-
-        return null; // TODO: "register"
+        return "register";
     }
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user) {
+    public String registerUser(@ModelAttribute User user,
+                               Model model) {
 
-        // =========================
-        //TASK
-        // =========================
-        // STEP 1: call service.registerUser(user)
-        // STEP 2: if success → redirect to login
-        // STEP 3: else → stay on register page
+        
+        User savedUser = userService.registerUser(user);
 
-        return null;
+        
+        if (savedUser != null) {
+        if(savedUser != null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("error",
+            "Name or Email is already in use!");
+
+        return "register";
     }
 
     @GetMapping("/login")
     public String showLoginPage() {
 
-        // STEP 1: return login page
 
-        return null; // TODO: "login"
+        return "login";
     }
 
     @PostMapping("/login")
     public String login(@RequestParam String email,
-                         @RequestParam String password) {
+                        @RequestParam String password,
+                        HttpSession session) {
 
-        // =========================
-        // PSEUDO CODE
-        // =========================
-        // STEP 1: call userService.login(email, password)
-        // STEP 2: if user != null → redirect /packs
-        // STEP 3: else → return login page again
+        User user = userService.login(email, password);
 
-        return null;
+        if (user != null) {
+
+            // Store logged-in user in session
+            session.setAttribute("loggedInUser", user);
+
+            return "redirect:/packs";
+        }
+
+        return "login";
     }
 
-	public UserService getUserService() {
-		return userService;
-	}
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+
+        session.invalidate();
+
+        return "redirect:/login";
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    @PostConstruct
+    public void test() {
+        System.out.println("USER CONTROLLER LOADED");
+    }
 }
