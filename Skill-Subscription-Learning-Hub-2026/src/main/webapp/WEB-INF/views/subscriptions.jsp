@@ -25,6 +25,11 @@
 
 <h2>My Subscriptions</h2>
 
+<h3>
+    Total Subscriptions: ${count}
+</h3>
+
+
 <table border="1">
 
 <tr>
@@ -34,18 +39,35 @@
     <th>Status</th>
 </tr>
 
+
 <c:forEach var="s" items="${subs}">
 
 <tr>
+
     <td>${s.skillPack.title}</td>
+
     <td>${s.startDate}</td>
+
     <td>${s.endDate}</td>
+
     <td>${s.status}</td>
+
 </tr>
 
 </c:forEach>
 
+
 </table>
+
+<br><br>
+<a href="/packs">
+    <button>Back to Skill Packs</button>
+</a>
+
+&nbsp;&nbsp;
+<a href="/logout">
+    <button>Logout</button>
+</a>
 
 </body>
 </html>
