@@ -36,6 +36,11 @@
 
     <h3>Register</h3>
 
+	<c:if test="${not empty error}">
+	    <p style="color:red;">
+	        ${error}
+	    </p>
+	</c:if>
     <form action="/register" method="post">
 
         <!--  enter name -->
@@ -54,4 +59,5 @@
 </div>
 
 </body>
+</html>
 </html>
