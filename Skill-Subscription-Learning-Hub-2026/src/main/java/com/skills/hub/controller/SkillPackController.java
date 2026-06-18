@@ -1,70 +1,110 @@
 package com.skills.hub.controller;
 
 import com.skills.hub.model.SkillPack;
+import com.skills.hub.model.Subscription;
+import com.skills.hub.model.User;
 import com.skills.hub.service.SkillPackService;
+import com.skills.hub.service.SubscriptionService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-/*
-=========================================================
-WHAT IS THIS FILE?
-Handles skill pack (course) operations
-=========================================================
-*/
+import java.util.List;
+import java.util.stream.Collectors;
 
+
+@SuppressWarnings("unused")
 @Controller
 public class SkillPackController {
 
     private final SkillPackService packService;
+    private final SubscriptionService subscriptionService;
 
-    public SkillPackController(SkillPackService packService) {
+    public SkillPackController(
+            SkillPackService packService,
+            SubscriptionService subscriptionService) {
+
         this.packService = packService;
+        this.subscriptionService = subscriptionService;
     }
 
     @GetMapping("/packs")
-    public String viewPacks(Model model) {
+    public String viewPacks(Model model,
+                            HttpSession session) {
+    public String viewPacks(
+            @RequestParam(required = false) String keyword,
+            Model model,
+            HttpSession session) {
 
-        // =========================
-        // TASK
-        // =========================
-        // STEP 1: list = packService.getAllPacks()
-        // STEP 2: model.addAttribute("packs", list)
-        // STEP 3: return packs.jsp
+        List<SkillPack> list;
 
-        return null;
+        var list = packService.getAllPacks();
+        if (keyword != null && !keyword.isBlank()) {
+            list = packService.searchPacks(keyword);
+        } else {
+            list = packService.getAllPacks();
+        }
+
+        model.addAttribute("packs", list);
+
+        User user = (User) session.getAttribute("loggedInUser");
+
+        if (user != null) {
+
+            List<Long> subscribedPackIds =
+                    subscriptionService.getUserSubscriptions(user.getId())
+                            .stream()
+                            .map(sub -> sub.getSkillPack().getId())
+                            .collect(Collectors.toList());
+
+            model.addAttribute("subscribedPackIds", subscribedPackIds);
+        }
+
+        return "packs";
     }
 
     @GetMapping("/add-pack")
     public String showAddPackPage() {
 
-        // STEP 1: return add-pack page
-
-        return null;
+        return "add-pack";
     }
 
     @PostMapping("/add-pack")
     public String addPack(@ModelAttribute SkillPack pack) {
 
-        // =========================
-        // TASK
-        // =========================
-        // STEP 1: call packService.addSkillPack(pack)
-        // STEP 2: redirect /packs
+        packService.addSkillPack(pack);
 
-        return null;
+        return "redirect:/packs";
     }
 
     @GetMapping("/delete-pack/{id}")
     public String deletePack(@PathVariable Long id) {
 
-        // STEP 1: call packService.deleteSkillPack(id)
-        // STEP 2: redirect /packs
+        packService.deleteSkillPack(id);
 
-        return null;
+        return "redirect:/packs";
     }
 
-	public SkillPackService getPackService() {
-		return packService;
-	}
+    @PostMapping("/update-pack")
+    public String updatePack(@ModelAttribute SkillPack pack) {
+
+        System.out.println("ID = " + pack.getId());
+        System.out.println("Title = " + pack.getTitle());
+        System.out.println("Description = " + pack.getDescription());
+        System.out.println("Price = " + pack.getPrice());
+
+        packService.updateSkillPack(pack);
+
+        return "redirect:/packs";
+    }
 }
+
+
+    
+      
+
+  
+       
